@@ -5,10 +5,15 @@ import time
 import zipfile
 import subprocess
 import json
+import pydicom
+import os
+import matplotlib.pyplot as plt
+from PIL import Image, ImageDraw
 
 
-#The base url from ngrok - doesn't change
-base_url = 'http://9af98c19.ngrok.io/'
+#The base url from ngrok
+#base_url = raw_input("Ngrok base url(http://<id>.ngrok.io): ")
+base_url = 'http://a6cb8bf4.ngrok.io'
 
 
 UPLOAD_FOLDER = 'data/'
@@ -29,6 +34,41 @@ def zip_extract(path_to_zip):
         return 1
     except:
         return 0
+
+def extract_patient_images(patient_id):
+    patient_path = 'data/' + patient_id + '/'
+    patient_files = os.listdir(patient_path)
+    if (len(patient_files) == 0):
+        return 0
+    try:
+        process = subprocess.Popen('mkdir ' + patient_path + 'jpg', stdout=subprocess.PIPE, shell=True)
+        output, error = process.communicate()
+    except:
+        pass
+    for image in patient_files:
+        try:
+            if (image.split('.')[0] != 'CT' and image.split('.')[0] != 'MR'):
+                continue
+            image_dcm = pydicom.dcmread(patient_path + image)
+            img_file = open(patient_path + 'jpg/' + image.replace('.dcm','') + '.jpg', 'wb')
+            plt.imsave(img_file, image_dcm.pixel_array)
+        except:
+            continue
+    return 1
+
+def get_images(patient_id):
+    #Found patient's record
+    images_path = 'data/' + patient_id + '/jpg/'
+    if os.path.exists(images_path):
+        img_vector = []
+        for image in os.listdir(images_path):
+            img_url = base_url + images_path + image
+            print('Image: ', img_url)
+            img_vector.append(img_url)
+    else:
+        return []
+
+    return img_vector
 
 # @app.route("/")
 # def hello():
@@ -61,33 +101,39 @@ def upload_data():
             process = subprocess.Popen('rm ' + uploaded_file_path, stdout=subprocess.PIPE, shell=True)
             output, error = process.communicate()
 
-            return 'File uploaded'
+        #Extract images and return image url list
 
-        #Upload a folder
+        if (extract_patient_images(filename_extended[0]) == 0):
+            return 'Failed to extract patient images'
+        img_vector = get_images(filename_extended[0])
+        return Response(json.dumps(img_vector),  mimetype='application/json')
+        #return img_vector
+        #return 'Success'
 
-    return "Nothing happened"
+
+    return 'Fail'
 
 
 #Return image vector for a given patient
-@app.route('/get_images/<string:patient_id>', methods=['GET'])
-def get_images(patient_id):
-    #Found patient's record
-    images_path = 'data/' + patient_id + '/jpg/'
-    if os.path.exists(images_path):
-        img_vector = []
-
-        [ { "name" : filename, "size" : st.st_size ,
-        "url" : url_for('show', filename=filename)} ]
-
-        for image in os.listdir(images_path):
-            img_url = base_url + images_path + image
-            print('Image: ', img_url)
-            img_vector.append(img_url)
-    else:
-        return 'No images for this patient yet'
-
-    #I don't think we need a json response here
-    return Response(json.dumps(img_vector),  mimetype='application/json')
+# @app.route('/get_images/<string:patient_id>', methods=['GET'])
+# def get_images(patient_id):
+#     #Found patient's record
+#     images_path = 'data/' + patient_id + '/jpg/'
+#     if os.path.exists(images_path):
+#         img_vector = []
+#
+#         [ { "name" : filename, "size" : st.st_size ,
+#         "url" : url_for('show', filename=filename)} ]
+#
+#         for image in os.listdir(images_path):
+#             img_url = base_url + images_path + image
+#             print('Image: ', img_url)
+#             img_vector.append(img_url)
+#     else:
+#         return 'No images for this patient yet'
+#
+#     #I don't think we need a json response here
+#     return Response(json.dumps(img_vector),  mimetype='application/json')
 
 #Return the queried image
 @app.route('/data/<string:patient_id>/jpg/<string:image>', methods=['GET'])
