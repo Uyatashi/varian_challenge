@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Varian - Home Page</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+<body>
+<div id="bgc"></div>
+<div id="black-screen">
+		
+</div>
+<div class="text-center main">
+	
+	<div class="centered col-md-5">
+		<img src="Star.svg" class="star">
+		<img src="Logo.svg" class="logo">
+		<p>uploading data...</p>
+	</div>
+	<div class="col-md-12 footer ">
+		<div class="image-upload">
+			<form method="post"> 
+				<label for="file-input" id="btn">
+			    	<img src="BTN.svg" id="btnimage" >
+			    </label>
+
+			    <input id="file-input" type="file"/>
+			    <input type="submit" name="submit" id="submit">
+			</form>
+		</div>
+	</div>
+</div>
+
+
+<div class="userDetailPage">
+	<div class="container" >
+
+	</div>
+</div>
+
+<script   src="https://code.jquery.com/jquery-3.3.1.js"   integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="   crossorigin="anonymous"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('.main').css('display','none')
+	$('.main').fadeIn()
+
+	var route = 0;
+	function rotate(){
+		route += 180
+		$('.star').css('transform','rotate('+route+'deg)');
+	}
+	var interval;
+	$('#btn').click(function(event){
+		$(this).css('opacity','0.6')
+		$this = $(this)
+		$('input[type=file]').change(function(e){
+			$('.star').css('-webkit-transform','rotate(180deg)'); 
+			interval = setInterval(rotate,1000)
+			$('.star').css('animation-play-state','running')
+			$('.logo').css('animation-play-state','running')
+			$this.fadeOut('slow')
+			$('.logo+p').fadeIn()
+			// loading
+			setTimeout(function(){
+				$('#bgc').css('transform','scale3d(2.5, 2.5, 2.5)');
+				$('#bgc').fadeOut()
+				$('.logo+p').fadeOut('slow');
+				clearInterval(interval)
+				$('.star').css('transform','scale3d(0.1, 0.1, 0.1)');
+				
+				$('.userDetailPage').fadeIn('slow');
+				$('.main').fadeOut('slow',newPage);
+			},7000)
+		})
+	})
+	
+	function newPage(){
+		window.location = "userData.html"
+	}
+	
+})
+</script>
+</body>
+</html>

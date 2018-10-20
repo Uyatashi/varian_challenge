@@ -1,0 +1,87 @@
+#bgc {
+  background: lightblue url("background.png") no-repeat fixed center;
+  background-size: cover;
+  background-color: black;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  transition: all 1.5s linear; }
+
+#black-screen {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: black;
+  transition: all 5s linear;
+  display: none; }
+
+.centered {
+  position: fixed;
+  /* or absolute */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); }
+
+.star {
+  position: absolute;
+  left: 0;
+  top: 0;
+  -webkit-animation: starMove 1s;
+  -moz-animation: starMove 1s;
+  -ms-animation: starMove 1s;
+  -o-animation: starMove 1s;
+  animation: starMove 1s;
+  animation-fill-mode: forwards;
+  animation-play-state: paused;
+  transition: all 1s linear;
+  perspective: 300px; }
+
+.logo + p {
+  color: #1E9CC9;
+  font-size: 24px;
+  display: none; }
+
+.logo {
+  position: relative;
+  right: -50px;
+  -webkit-animation: logoMove 2s;
+  -moz-animation: logoMove 2s;
+  -ms-animation: logoMove 2s;
+  -o-animation: logoMove 2s;
+  animation: logoMove 2s;
+  animation-fill-mode: forwards;
+  animation-play-state: paused; }
+
+.footer {
+  position: absolute;
+  bottom: 200px; }
+
+#file-input, #submit {
+  display: none; }
+
+.animateStar {
+  -webkit-transform: scale3d(0.1, 0.1, 0.1);
+  -moz-transform: scale3d(0.1, 0.1, 0.1);
+  transform: scale3d(0.1, 0.1, 0.1);
+  transition: all 5s linear; }
+
+@keyframes logoMove {
+  from {
+    right: -50px; }
+  to {
+    opacity: 0;
+    right: -1000px; } }
+@keyframes starMove {
+  from {
+    left: 0px; }
+  to {
+    left: calc(50% - 45px);
+    /*transform: rotate(180deg);*/ } }
+.userDetailPage {
+  display: none;
+  background-color: black;
+  position: absolute;
+  width: 100%;
+  height: 100%; }
+
+/*# sourceMappingURL=style.css.map */
