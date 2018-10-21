@@ -1,7 +1,24 @@
+#goToHomePage {
+	position: absolute;
+	/* or absolute */
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align:center;
+	font-family: 'Poppins Bold', sans-serif;
+	color:white;
+	.btn {
+		background-color:darken(gray,35%);
+		color:white;
+		padding:5px 15px;
+	}
+	display:none;
+}
 
 #dataPage{
 	padding-top:50px;
 	padding-right:50px;
+	padding-left:50px;
 }
 
 .userDetailPage{
@@ -14,7 +31,7 @@
 .brainImage {
 		width:100%;
 		height:100vw;
-		max-height:800px;
+		max-height:780px;
 		img {
 			width:100%;
 			height:100vw;
@@ -22,35 +39,50 @@
 		}
 	}
 .userInfos {
-	
+	.logo-item {
+		opacity:0;
+		position:relative;
+		transition:all 1s linear;
+		-webkit-animation: logoItemGoingUp 1s;
+		-moz-animation: logoItemGoingUp 1s;
+		-ms-animation: logoItemGoingUp 1s;
+		-o-animation: logoItemGoingUp 1s;
+		animation: logoItemGoingUp 1s;
+		animation-fill-mode: forwards;
+	}
 	.warning-item {
 		color:darken(red,20%);
 		padding:50px 0 0 0;
 		font-size:36px;
 		font-family: 'Poppins Bold', sans-serif;
+		display:none;
 	}
 	.probability-item p:first-child {
 		color:lightgray;
 		font-size:90px;
 		font-family: 'Poppins Bold', sans-serif;
+		display:none;
 	}
 	.probability-item p:nth-child(2) {
 		color:gray;
 		font-size:30px;
 		padding-bottom:15px;
 		font-family:'Poppins',sans-serif;
+		display:none;
 	}
 	.details {
 		color:lighten(gray,25%);
 		line-spacing:5px;
 		font-size:24px;
 		font-family:'Poppins Light',sans-serif;
+		display:none;
 	}	
 	a {
 		color:#1D5C7D;
 		text-decoration:underline;
 		word-spacing:10px;
 		font-size:16px;
+		display:none;
 		&:hover{
 			color:#1D5C7D;
 			text-decoration:none;
@@ -58,7 +90,7 @@
 		}
 		font-family:'Poppins Light',sans-serif;
 	}
-	.btn1,.btn2{
+	.btn{
 		color:white;
 		font-size:20px;
 		padding:20px 25px;
@@ -67,8 +99,21 @@
 		margin-left:25px;
 		margin-top:20px;
 		font-family:'Poppins Light',sans-serif;
+		display:none;
+		cursor:pointer;
+
 	}
 	.btn2 {
 		background-color:darken(gray,35%);
+	}
+}
+
+@keyframes logoItemGoingUp {
+	from {
+		bottom:-45px;
+	} 
+	to {
+		opacity:1;
+		bottom:0px;
 	}
 }
