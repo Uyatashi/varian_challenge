@@ -25,7 +25,7 @@
 			    	<img src="BTN.svg" id="btnimage" >
 			    </label>
 
-			    <input id="file-input" type="file" name="file" onchange="form.submit()" />
+			    <input id="file-input" type="file" name="file" />
 			    <!--<input type="submit" name="submit" id="submit">-->
 					<input type="submit" name="submit" id="submit" value="Submit">
 			</form>
@@ -62,6 +62,8 @@ $(document).ready(function(){
 			$('.logo').css('animation-play-state','running')
 			$this.fadeOut('slow')
 			$('.logo+p').fadeIn()
+			document.getElementById("submit").click();
+
 			// loading
 			setTimeout(function(){
 				$('#bgc').css('transform','scale3d(2.5, 2.5, 2.5)');

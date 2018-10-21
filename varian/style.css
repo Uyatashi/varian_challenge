@@ -58,7 +58,7 @@
   position: absolute;
   bottom: 200px; }
 
-#file-input {
+#file-input, #submit {
   display:none; }
 
 .animateStar {

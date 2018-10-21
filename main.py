@@ -115,7 +115,7 @@ def upload_data():
     name, ext = get_filename_and_ext(file.filename)
     if not allowed_file_ext(ext):
         return 'File extension "{}" not allowed'.format(ext), 400
-    print('123')
+
     if not zip_extract(file.read()):
         return "Failed to extract .zip file", 400
 
@@ -153,6 +153,9 @@ def show_image(patient_id, image):
     image_path = 'data/' + patient_id + '/jpg/' + image
     if os.path.exists(image_path):
         return send_file(image_path, mimetype='image/jpg')
+
+@app.route('/userData')
+def show_user_data(image_json):
 
 
 # serve static files
