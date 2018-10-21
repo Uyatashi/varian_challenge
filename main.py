@@ -161,8 +161,14 @@ def show_image(patient_id, image):
 
 # serve static files
 @app.route('/<path:path>')
-def static_file(path):
+def serve_static(path):
     return app.send_static_file(path)
+
+
+# serve index.html
+@app.route("/")
+def root():
+    return app.send_static_file("index.html")
 
 
 if __name__ == '__main__':
