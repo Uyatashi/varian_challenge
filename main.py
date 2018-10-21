@@ -13,8 +13,9 @@ from PIL import Image, ImageDraw
 
 #The base url from ngrok
 #base_url = raw_input("Ngrok base url(http://<id>.ngrok.io): ")
-base_url = 'http://a6cb8bf4.ngrok.io'
 
+#base_url = 'http://a6cb8bf4.ngrok.io'
+base_url = 'localhost:5000'
 
 UPLOAD_FOLDER = 'data/'
 ALLOWED_EXTENSIONS = set(['dcm', 'jpg', 'zip'])
@@ -47,7 +48,8 @@ def extract_patient_images(patient_id):
         pass
     for image in patient_files:
         try:
-            if (image.split('.')[0] != 'CT' and image.split('.')[0] != 'MR'):
+            #if (image.split('.')[0] != 'CT' and image.split('.')[0] != 'MR'):
+            if (image.split('.')[0] != 'MR'):
                 continue
             image_dcm = pydicom.dcmread(patient_path + image)
             img_file = open(patient_path + 'jpg/' + image.replace('.dcm','') + '.jpg', 'wb')
@@ -70,9 +72,20 @@ def get_images(patient_id):
 
     return img_vector
 
-# @app.route("/")
-# def hello():
-#     return "Hello World!"
+def jsonify_images(img_vector):
+    json_str = '{'
+    for img in img_vector:
+        json_str = json_str + '{"frame"="' + img + '",'
+        json_str = json_str + '"score"="0.98"},'
+    json_str = json_str[:-1] + '}'
+    return json_str
+
+
+
+@app.route("/")
+def get_main_site():
+    #return '123'
+    return app.send_static_file('varian/index.html')
 
 @app.route("/upload", methods=['POST'])
 def upload_data():
@@ -106,9 +119,12 @@ def upload_data():
         if (extract_patient_images(filename_extended[0]) == 0):
             return 'Failed to extract patient images'
         img_vector = get_images(filename_extended[0])
-        return Response(json.dumps(img_vector),  mimetype='application/json')
+        json_res = jsonify_images(img_vector)
+        return Response(json_res,  mimetype='application/json')
+        # return Response(json.dumps(img_vector),  mimetype='application/json')
         #return img_vector
         #return 'Success'
+        return
 
 
     return 'Fail'
