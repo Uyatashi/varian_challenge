@@ -20,7 +20,7 @@
 	</div>
 	<div class="col-md-12 footer ">
 		<div class="image-upload">
-			<form method="post"> 
+			<form id="scanForm" method="post"> 
 				<label for="file-input" id="btn">
 			    	<img src="BTN.svg" id="btnimage" >
 			    </label>
@@ -61,6 +61,7 @@ $(document).ready(function(){
 			$('.logo').css('animation-play-state','running')
 			$this.fadeOut('slow')
 			$('.logo+p').fadeIn()
+			$("#scanForm").submit()
 			// loading
 			setTimeout(function(){
 				$('#bgc').css('transform','scale3d(2.5, 2.5, 2.5)');
