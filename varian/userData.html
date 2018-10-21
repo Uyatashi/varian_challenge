@@ -15,6 +15,12 @@
 </head>
 <body>
 
+<div id="goToHomePage">
+	<div>
+		<h1>Thank you for making system better !</h1>
+		<a href="index.html" class="btn"><button class="btn">Home</button></a>
+	</div>
+</div>
 
 <div id="dataPage" class="container-fluid">
 
@@ -23,45 +29,13 @@
 			<div class="brainImage">
 				<div id="demo" class="carousel slide" data-ride="carousel">
 					<div class="carousel-inner">
-						<div class="carousel-item active">
-							<img src="http://www.thedailysheeple.com/wp-content/uploads/2014/03/10750147-x-ray-close-up-with-brain-and-skull-concept.jpg">
-						</div>
-						<div class="carousel-item ">
-							<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvxacPrCuFDgrIlf41AKyDtxT0Z_XbPbBozONv9dx_o2Xai8g9Bw">
-						</div>
-						<div class="carousel-item">
-							<img src="https://us.123rf.com/450wm/alexmit/alexmit1612/alexmit161200024/67134236-human-brain-x-ray-scan-medically-accurate-3d-illustration.jpg?ver=6">
-						</div>
-						<div class="carousel-item ">
-							<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvxacPrCuFDgrIlf41AKyDtxT0Z_XbPbBozONv9dx_o2Xai8g9Bw">
-						</div>
-						<div class="carousel-item">
-							<img src="https://us.123rf.com/450wm/alexmit/alexmit1612/alexmit161200024/67134236-human-brain-x-ray-scan-medically-accurate-3d-illustration.jpg?ver=6">
-						</div>
-						<div class="carousel-item ">
-							<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvxacPrCuFDgrIlf41AKyDtxT0Z_XbPbBozONv9dx_o2Xai8g9Bw">
-						</div>
-						<div class="carousel-item">
-							<img src="https://us.123rf.com/450wm/alexmit/alexmit1612/alexmit161200024/67134236-human-brain-x-ray-scan-medically-accurate-3d-illustration.jpg?ver=6">
-						</div>
-						<div class="carousel-item ">
-							<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvxacPrCuFDgrIlf41AKyDtxT0Z_XbPbBozONv9dx_o2Xai8g9Bw">
-						</div>
-						<div class="carousel-item">
-							<img src="https://us.123rf.com/450wm/alexmit/alexmit1612/alexmit161200024/67134236-human-brain-x-ray-scan-medically-accurate-3d-illustration.jpg?ver=6">
-						</div>
-						<div class="carousel-item ">
-							<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvxacPrCuFDgrIlf41AKyDtxT0Z_XbPbBozONv9dx_o2Xai8g9Bw">
-						</div>
-						<div class="carousel-item">
-							<img src="https://us.123rf.com/450wm/alexmit/alexmit1612/alexmit161200024/67134236-human-brain-x-ray-scan-medically-accurate-3d-illustration.jpg?ver=6">
-						</div>
+						<img src="339663/MR.339663.Image 1.jpg" class="intro-brain-image" style="display: none">
 					</div>
 				</div>
-				<a class="carousel-control-prev" href="#demo" data-slide="prev" style="display:none">
+				<a class="carousel-control-prev d-none" href="#demo" data-slide="prev">
 					<img src="https://cdn1.iconfinder.com/data/icons/nav-and-menu/64/arrow_back_left_navigation_user_interface_ui-512.png" style="width: 45px;height: 45px">
 				</a>
-				<a class="carousel-control-next" href="#demo" data-slide="next" style="display:none">
+				<a class="carousel-control-next d-none" href="#demo" data-slide="next">
 					<img src="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-arrow-forward-512.png" style="width: 45px;height: 45px">
 				</a>
 			</div>
@@ -88,8 +62,8 @@
 				<a href="">watch source image</a>
 			</div>
 			<div class="">
-				<button class="btn1">Right Result</button>
-				<button class="btn2">False Result</button>
+				<button class="btn1 btn">Right Result</button>
+				<button class="btn2 btn">False Result</button>
 			</div>
 		</div>	
 	</div>
@@ -98,7 +72,50 @@
 
 
 <script type="text/javascript">
+$(document).ready(function(){
+	
+	i=0;
+	var x = setInterval(function(){
+		i++;
+		console.log(i);
+		$('.intro-brain-image').fadeIn()
+		$('.intro-brain-image').attr('src',"339663/MR.339663.Image "+i+".jpg")
+		if(i==80){
+			$('.intro-brain-image').addClass('d-none');
+			for(i=80;i>0;i--){
+				if(i==80){
+					$('.carousel-inner').append("<div class='carousel-item active'> <img src='339663/MR.339663.Image "+i+".jpg'> </div>")	
+				}
+				$('.carousel-inner').append("<div class='carousel-item '> <img src='339663/MR.339663.Image "+i+".jpg'> </div>")
+				$('.brainImage a').removeClass('d-none');
+			}
+			$('.warning-item').fadeIn()
+			setTimeout(function(){
+				$('.probability-item p:first-child').fadeIn()
+				$('.probability-item p:nth-child(2)').fadeIn()
+			},2000)
+			setTimeout(function(){
+				$('.details').fadeIn()
+				$('.userInfos a').fadeIn()
+			},2000)
+			setTimeout(function(){
+				$('.btn').fadeIn()
+			},2000)
+			
+			clearInterval(x);
 
+		}
+	},10)
+
+	$('.btn').click(function(){
+		$('#dataPage').css('opacity','.6')
+		$('#goToHomePage').fadeIn()
+
+	})
+
+	
+
+})
 </script>
 
 </html>
