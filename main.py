@@ -1,6 +1,6 @@
 import os
 from flask import Flask, flash, request, Response, redirect, url_for, jsonify, send_file
-from werkzeug.utils import secure_filename
+# from werkzeug.utils import secure_filename
 import time
 import zipfile
 import subprocess
@@ -8,129 +8,123 @@ import json
 import pydicom
 import os
 import matplotlib.pyplot as plt
-from PIL import Image, ImageDraw
+from io import BytesIO
+
+# from PIL import Image, ImageDraw
 
 
-#The base url from ngrok
-#base_url = raw_input("Ngrok base url(http://<id>.ngrok.io): ")
+# The base url from ngrok
+# base_url = raw_input("Ngrok base url(http://<id>.ngrok.io): ")
 
-#base_url = 'http://a6cb8bf4.ngrok.io'
-base_url = 'localhost:5000'
+# base_url = 'http://a6cb8bf4.ngrok.io'
+# base_url = 'localhost:5000/'
 
 UPLOAD_FOLDER = 'data/'
-ALLOWED_EXTENSIONS = set(['dcm', 'jpg', 'zip'])
+JPG_FOLDER = "varian/pictures/"
+JPG_SERVE_FOLDER = "/pictures/"
+ALLOWED_EXTENSIONS = {'dcm', 'jpg', 'zip'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def zip_extract(path_to_zip):
+def get_filename_and_ext(filename: str):
+    dot_idx = filename.rfind(".")
+    return (filename, "") if dot_idx is -1 else (filename[:dot_idx], filename[dot_idx + 1:])
+
+
+def allowed_file_ext(ext: str) -> bool:
+    return ext.lower() in ALLOWED_EXTENSIONS
+
+
+def zip_extract(file):
     try:
-        zip_ref = zipfile.ZipFile(path_to_zip, 'r')
-        zip_ref.extractall(UPLOAD_FOLDER)
-        zip_ref.close()
-        return 1
-    except:
-        return 0
+        with zipfile.ZipFile(BytesIO(file)) as zip_ref:
+            zip_ref.extractall(UPLOAD_FOLDER)
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
+def remove_directory(dir_path):
+    if not os.path.exists(dir_path):
+        return
+
+    for f in os.listdir(dir_path):
+        os.remove(dir_path + f)
+    os.rmdir(dir_path)
+
+
+def convert_file(filename, in_path, out_path):
+    with open(out_path + filename.replace(" ", "_") + '.jpg', 'wb') as f:
+        plt.imsave(f, pydicom.dcmread(in_path + filename).pixel_array)
+
 
 def extract_patient_images(patient_id):
-    patient_path = 'data/' + patient_id + '/'
-    patient_files = os.listdir(patient_path)
-    if (len(patient_files) == 0):
-        return 0
+    patient_data_folder = UPLOAD_FOLDER + patient_id + "/"
     try:
-        process = subprocess.Popen('mkdir ' + patient_path + 'jpg', stdout=subprocess.PIPE, shell=True)
-        output, error = process.communicate()
-    except:
-        pass
-    for image in patient_files:
-        try:
-            #if (image.split('.')[0] != 'CT' and image.split('.')[0] != 'MR'):
-            if (image.split('.')[0] != 'MR'):
-                continue
-            image_dcm = pydicom.dcmread(patient_path + image)
-            img_file = open(patient_path + 'jpg/' + image.replace('.dcm','') + '.jpg', 'wb')
-            plt.imsave(img_file, image_dcm.pixel_array)
-        except:
-            continue
-    return 1
+        patient_files = os.listdir(patient_data_folder)
+        if not patient_files:
+            return False
 
-def get_images(patient_id):
-    #Found patient's record
-    images_path = 'data/' + patient_id + '/jpg/'
-    if os.path.exists(images_path):
-        img_vector = []
-        for image in os.listdir(images_path):
-            img_url = base_url + images_path + image
-            print('Image: ', img_url)
-            img_vector.append(img_url)
-    else:
+        patient_jpg_folder = JPG_FOLDER + patient_id + "/"
+        remove_directory(patient_jpg_folder)
+        os.mkdir(patient_jpg_folder)
+
+        mr_files = list(filter(lambda x: x.split(".")[0] == "MR", patient_files))
+        for f in mr_files:
+            convert_file(f, patient_data_folder, patient_jpg_folder)
+
+    except Exception as e:
+        print(e)
+        return False
+
+    finally:
+        remove_directory(patient_data_folder)
+
+    return True
+
+
+def get_images(patient_id: str):
+    if patient_id[-1] != "/":
+        patient_id += "/"
+
+    folder = JPG_FOLDER + patient_id
+    if not os.path.exists(folder):
         return []
+    return list(map(lambda x: JPG_SERVE_FOLDER + patient_id + x, os.listdir(folder)))
 
-    return img_vector
 
 def jsonify_images(img_vector):
-    json_str = '{'
-    for img in img_vector:
-        json_str = json_str + '{"frame"="' + img + '",'
-        json_str = json_str + '"score"="0.98"},'
-    json_str = json_str[:-1] + '}'
-    return json_str
+    return json.dumps(list(map(lambda x: {'frame': x, 'score': '0.98'}, img_vector)))
 
-
-
-@app.route("/")
-def get_main_site():
-    #return '123'
-    return app.send_static_file('varian/index.html')
 
 @app.route("/upload", methods=['POST'])
 def upload_data():
     # check if the post request has the file part
     if 'file' not in request.files:
-        return redirect(request.url)
+        return redirect(request.url),
 
-    file = request.files['file']
-    # submit an empty part without filename
-    if file.filename == '':
-        return "No selected file"
+    file = request.files.get('file', False)
+    if not file or not file.filename:
+        return "No selected file", 400
 
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        timestamp = str(time.time()).replace('.','')
-        filename_extended = filename.split('.')
-        uploaded_file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename_extended[0] + '_' + timestamp + '.' + filename_extended[1])
-        file.save(uploaded_file_path)
+    name, ext = get_filename_and_ext(file.filename)
+    if not allowed_file_ext(ext):
+        return 'File extension "{}" not allowed'.format(ext), 400
 
-        #Extract zipped patient files
-        if filename_extended[1] == 'zip':
-            if (zip_extract(uploaded_file_path) == 0):
-                return "Failed to extract .zip file"
+    if not zip_extract(file.read()):
+        return "Failed to extract .zip file", 400
 
-            #Delete the uploaded .zip file
-            process = subprocess.Popen('rm ' + uploaded_file_path, stdout=subprocess.PIPE, shell=True)
-            output, error = process.communicate()
+        # Extract images and return image url list
+    if not extract_patient_images(name):
+        return 'Failed to extract patient images', 500
 
-        #Extract images and return image url list
-
-        if (extract_patient_images(filename_extended[0]) == 0):
-            return 'Failed to extract patient images'
-        img_vector = get_images(filename_extended[0])
-        json_res = jsonify_images(img_vector)
-        return Response(json_res,  mimetype='application/json')
-        # return Response(json.dumps(img_vector),  mimetype='application/json')
-        #return img_vector
-        #return 'Success'
-        return
+    return Response(jsonify_images(get_images(name)), mimetype='application/json')
 
 
-    return 'Fail'
-
-
-#Return image vector for a given patient
+# Return image vector for a given patient
 # @app.route('/get_images/<string:patient_id>', methods=['GET'])
 # def get_images(patient_id):
 #     #Found patient's record
@@ -151,7 +145,7 @@ def upload_data():
 #     #I don't think we need a json response here
 #     return Response(json.dumps(img_vector),  mimetype='application/json')
 
-#Return the queried image
+# Return the queried image
 @app.route('/data/<string:patient_id>/jpg/<string:image>', methods=['GET'])
 def show_image(patient_id, image):
     image_path = 'data/' + patient_id + '/jpg/' + image
@@ -159,4 +153,25 @@ def show_image(patient_id, image):
         return send_file(image_path, mimetype='image/jpg')
 
 
-app.run(host='0.0.0.0', debug=True, port=5000)
+# serve static files
+@app.route('/<path:path>')
+def serve_static(path):
+    return app.send_static_file(path)
+
+
+# serve index.html
+@app.route("/")
+def root():
+    return app.send_static_file("index.html")
+
+
+if __name__ == '__main__':
+    app.static_folder = "varian/"
+
+    if not os.path.exists(JPG_FOLDER):
+        os.mkdir(JPG_FOLDER)
+
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.mkdir(UPLOAD_FOLDER)
+
+    app.run(host='0.0.0.0', debug=True, port=5000)
