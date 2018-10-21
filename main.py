@@ -56,8 +56,8 @@ def remove_directory(dir_path):
     os.rmdir(dir_path)
 
 
-def convert_file(filename, in_path, out_path):
-    with open(out_path + filename.replace(" ", "_") + '.jpg', 'wb') as f:
+def convert_file(idx, filename, in_path, out_path):
+    with open(out_path + str(idx) + '.jpg', 'wb') as f:
         plt.imsave(f, pydicom.dcmread(in_path + filename).pixel_array)
 
 
@@ -73,8 +73,8 @@ def extract_patient_images(patient_id):
         os.mkdir(patient_jpg_folder)
 
         mr_files = list(filter(lambda x: x.split(".")[0] == "MR", patient_files))
-        for f in mr_files:
-            convert_file(f, patient_data_folder, patient_jpg_folder)
+        for idx, f in enumerate(mr_files):
+            convert_file(idx, f, patient_data_folder, patient_jpg_folder)
 
     except Exception as e:
         print(e)
@@ -86,7 +86,7 @@ def extract_patient_images(patient_id):
     return True
 
 
-def get_images(patient_id: str):
+def get_images_by_patient(patient_id: str):
     if patient_id[-1] != "/":
         patient_id += "/"
 
@@ -102,10 +102,9 @@ def jsonify_images(img_vector):
 
 @app.route("/upload", methods=['POST'])
 def upload_data():
-
     # check if the post request has the file part
     if 'file' not in request.files:
-        #return redirect(request.url)
+        # return redirect(request.url)
         pass
 
     file = request.files.get('file', False)
@@ -123,7 +122,7 @@ def upload_data():
     if not extract_patient_images(name):
         return 'Failed to extract patient images', 500
 
-    return Response(jsonify_images(get_images(name)), mimetype='application/json')
+    return redirect("/userData.html?id=" + name)
 
 
 # Return image vector for a given patient
@@ -154,8 +153,10 @@ def show_image(patient_id, image):
     if os.path.exists(image_path):
         return send_file(image_path, mimetype='image/jpg')
 
-@app.route('/userData')
-def show_user_data(image_json):
+
+@app.route('/userData/<string:patient_id>')
+def get_user_data(patient_id):
+    return Response(jsonify_images(get_images_by_patient(patient_id)), mimetype='application/json')
 
 
 # serve static files

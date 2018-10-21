@@ -29,7 +29,7 @@
 			<div class="brainImage">
 				<div id="demo" class="carousel slide" data-ride="carousel">
 					<div class="carousel-inner">
-						<img src="339663/MR.339663.Image 1.jpg" class="intro-brain-image" style="display: none">
+						<img src="1.jpg" class="intro-brain-image" style="display: none">
 					</div>
 				</div>
 				<a class="carousel-control-prev d-none" href="#demo" data-slide="prev">
@@ -72,50 +72,72 @@
 
 
 <script type="text/javascript">
-$(document).ready(function(){
+    var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+        
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+            
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : sParameterName[1];
+            }
+        }
+    };
+    
+    var a;
+    $(document).ready(function(){
+                      
+                      $.get({
+                            url: "/userData/" + getUrlParameter('id'),
+                            dataType:"json",
+                            success: function (res) {func1(res);}
+                            });
+                      })
+                  
 	
-	i=0;
-	var x = setInterval(function(){
-		i++;
-		console.log(i);
-		$('.intro-brain-image').fadeIn()
-		$('.intro-brain-image').attr('src',"339663/MR.339663.Image "+i+".jpg")
-		if(i==80){
-			$('.intro-brain-image').addClass('d-none');
-			for(i=80;i>0;i--){
-				if(i==80){
-					$('.carousel-inner').append("<div class='carousel-item active'> <img src='339663/MR.339663.Image "+i+".jpg'> </div>")	
-				}
-				$('.carousel-inner').append("<div class='carousel-item '> <img src='339663/MR.339663.Image "+i+".jpg'> </div>")
-				$('.brainImage a').removeClass('d-none');
-			}
-			$('.warning-item').fadeIn()
-			setTimeout(function(){
-				$('.probability-item p:first-child').fadeIn()
-				$('.probability-item p:nth-child(2)').fadeIn()
-			},2000)
-			setTimeout(function(){
-				$('.details').fadeIn()
-				$('.userInfos a').fadeIn()
-			},2000)
-			setTimeout(function(){
-				$('.btn').fadeIn()
-			},2000)
-			
-			clearInterval(x);
+    var func1 =  function(frames) {
+    i=0;
+    var x = setInterval(function(){
+                    
+        $('.intro-brain-image').fadeIn()
+        $('.intro-brain-image').attr('src',frames[i].frame)
+        i++;
+                        if (i == frames.length) { clearInterval(x);}
+<!--        if(i==frames.length){-->
+<!--            $('.intro-brain-image').addClass('d-none');-->
+<!--            for(idx=frames.length - 1;idx>0;idx--){-->
+<!--                if(idx==frames.length){-->
+<!--                    $('.carousel-inner').append("<div class='carousel-item active'> <img src='"+frames[idx].frame+"'> </div>")-->
+<!--                }-->
+<!--                $('.carousel-inner').append("<div class='carousel-item '> <img src='"+frames[idx].frame+"'> </div>")-->
+<!--                $('.brainImage a').removeClass('d-none');-->
+<!--            }-->
+<!--            $('.warning-item').fadeIn()-->
+<!--            setTimeout(function(){-->
+<!--                $('.probability-item p:first-child').fadeIn()-->
+<!--                $('.probability-item p:nth-child(2)').fadeIn()-->
+<!--            },2000)-->
+<!--            setTimeout(function(){-->
+<!--                $('.details').fadeIn()-->
+<!--                $('.userInfos a').fadeIn()-->
+<!--            },2000)-->
+<!--            setTimeout(function(){-->
+<!--                $('.btn').fadeIn()-->
+<!--            },2000)-->
+<!--            -->
+<!--            clearInterval(x);-->
+<!--        }-->
+    },50)
 
-		}
-	},10)
+    $('.btn').click(function(){
+        $('#dataPage').css('opacity','.6')
+        $('#goToHomePage').fadeIn()
 
-	$('.btn').click(function(){
-		$('#dataPage').css('opacity','.6')
-		$('#goToHomePage').fadeIn()
-
-	})
-
-	
-
-})
+    })
+}
 </script>
 
 </html>
