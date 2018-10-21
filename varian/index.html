@@ -1,45 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Varian - Home Page</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="style.css">
+    <title>Varian - Home Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
 <body>
 <div id="bgc"></div>
 <div id="black-screen">
-		
+
 </div>
 <div class="text-center main">
-	
-	<div class="centered col-md-5">
-		<img src="Star.svg" class="star">
-		<img src="Logo.svg" class="logo">
-		<p>uploading data...</p>
-	</div>
-	<div class="col-md-12 footer ">
-		<div class="image-upload">
-			<form id="scanForm" method="post"> 
-				<label for="file-input" id="btn">
-			    	<img src="BTN.svg" id="btnimage" >
-			    </label>
 
-			    <input id="file-input" type="file"/>
-			    <input type="submit" name="submit" id="submit">
-			</form>
-		</div>
-	</div>
+    <div class="centered col-md-5">
+        <img src="Star.svg" class="star">
+        <img src="Logo.svg" class="logo">
+        <p>uploading data...</p>
+    </div>
+    <div class="col-md-12 footer ">
+        <div class="image-upload">
+            <form id="scanForm" method="post">
+                <label for="file-input" id="btn">
+                    <img src="BTN.svg" id="btnimage">
+                </label>
+
+                <input id="file-input" type="file"/>
+                <input type="submit" name="submit" id="submit">
+            </form>
+        </div>
+    </div>
 </div>
 
 
 <div class="userDetailPage">
-	<div class="container" >
+    <div class="container">
 
-	</div>
+    </div>
 </div>
 
-<script   src="https://code.jquery.com/jquery-3.3.1.js"   integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="   crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
 <script type="text/javascript">
 $(document).ready(function(){
 	$('.main').css('display','none')
@@ -62,6 +63,7 @@ $(document).ready(function(){
 			$this.fadeOut('slow')
 			$('.logo+p').fadeIn()
 			$("#scanForm").submit()
+			alert("aaaaaa");
 			// loading
 			setTimeout(function(){
 				$('#bgc').css('transform','scale3d(2.5, 2.5, 2.5)');
@@ -81,6 +83,8 @@ $(document).ready(function(){
 	}
 	
 })
+
+
 </script>
 </body>
 </html>
