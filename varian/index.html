@@ -13,6 +13,8 @@
 </div>
 <div class="text-center main">
 	
+
+
 	<div class="centered col-md-5">
 		<img src="Star.svg" class="star">
 		<img src="Logo.svg" class="logo">
@@ -20,12 +22,12 @@
 	</div>
 	<div class="col-md-12 footer ">
 		<div class="image-upload">
-			<form id="scanForm" method="post"> 
+			<form id="scanForm" method="post" enctype="multipart/form-data" action=""> 
 				<label for="file-input" id="btn">
-			    	<img src="BTN.svg" id="btnimage" >
+			    	<img src="BTN.svg" id="btnimage">
 			    </label>
 
-			    <input id="file-input" type="file"/>
+			    <input id="file-input" type="file" name="file"/>
 			    <input type="submit" name="submit" id="submit">
 			</form>
 		</div>
@@ -79,7 +81,6 @@ $(document).ready(function(){
 	function newPage(){
 		window.location = "userData.html"
 	}
-	
 })
 </script>
 </body>
