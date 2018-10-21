@@ -58,8 +58,8 @@
   position: absolute;
   bottom: 200px; }
 
-#file-input, #submit {
-  display: none; }
+#file-input {
+  display:none; }
 
 .animateStar {
   -webkit-transform: scale3d(0.1, 0.1, 0.1);

@@ -9,11 +9,9 @@
 <body>
 <div id="bgc"></div>
 <div id="black-screen">
-		
+
 </div>
 <div class="text-center main">
-	
-
 
 	<div class="centered col-md-5">
 		<img src="Star.svg" class="star">
@@ -22,13 +20,14 @@
 	</div>
 	<div class="col-md-12 footer ">
 		<div class="image-upload">
-			<form id="scanForm" method="post" enctype="multipart/form-data" action=""> 
+			<form method="post" id="myForm" action='../upload' enctype='multipart/form-data'>
 				<label for="file-input" id="btn">
-			    	<img src="BTN.svg" id="btnimage">
+			    	<img src="BTN.svg" id="btnimage" >
 			    </label>
 
-			    <input id="file-input" type="file" name="file"/>
-			    <input type="submit" name="submit" id="submit">
+			    <input id="file-input" type="file" name="file" onchange="form.submit()" />
+			    <!--<input type="submit" name="submit" id="submit">-->
+					<input type="submit" name="submit" id="submit" value="Submit">
 			</form>
 		</div>
 	</div>
@@ -57,13 +56,12 @@ $(document).ready(function(){
 		$(this).css('opacity','0.6')
 		$this = $(this)
 		$('input[type=file]').change(function(e){
-			$('.star').css('-webkit-transform','rotate(180deg)'); 
+			$('.star').css('-webkit-transform','rotate(180deg)');
 			interval = setInterval(rotate,1000)
 			$('.star').css('animation-play-state','running')
 			$('.logo').css('animation-play-state','running')
 			$this.fadeOut('slow')
 			$('.logo+p').fadeIn()
-			$("#scanForm").submit()
 			// loading
 			setTimeout(function(){
 				$('#bgc').css('transform','scale3d(2.5, 2.5, 2.5)');
@@ -71,16 +69,17 @@ $(document).ready(function(){
 				$('.logo+p').fadeOut('slow');
 				clearInterval(interval)
 				$('.star').css('transform','scale3d(0.1, 0.1, 0.1)');
-				
+
 				$('.userDetailPage').fadeIn('slow');
 				$('.main').fadeOut('slow',newPage);
 			},7000)
 		})
 	})
-	
+
 	function newPage(){
 		window.location = "userData.html"
 	}
+
 })
 </script>
 </body>

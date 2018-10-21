@@ -102,9 +102,11 @@ def jsonify_images(img_vector):
 
 @app.route("/upload", methods=['POST'])
 def upload_data():
+
     # check if the post request has the file part
     if 'file' not in request.files:
-        return redirect(request.url),
+        #return redirect(request.url)
+        pass
 
     file = request.files.get('file', False)
     if not file or not file.filename:
@@ -113,11 +115,11 @@ def upload_data():
     name, ext = get_filename_and_ext(file.filename)
     if not allowed_file_ext(ext):
         return 'File extension "{}" not allowed'.format(ext), 400
-
+    print('123')
     if not zip_extract(file.read()):
         return "Failed to extract .zip file", 400
 
-        # Extract images and return image url list
+    # Extract images and return image url list
     if not extract_patient_images(name):
         return 'Failed to extract patient images', 500
 
